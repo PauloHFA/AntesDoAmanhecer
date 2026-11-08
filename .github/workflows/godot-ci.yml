@@ -1,0 +1,28 @@
+name: "Antes do Amanhecer - Godot 4 CI"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  unit-tests:
+    name: "Executar 14 Suítes de Testes Unitários (Headless)"
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+
+    steps:
+      - name: "Checkout do Repositório"
+        uses: actions/checkout@v4
+
+      - name: "Verificar Versão do Godot"
+        run: godot --version
+
+      - name: "Importar Recursos do Projeto"
+        run: godot --headless --editor --quit
+
+      - name: "Executar Suíte de Testes Automatizados (CA-01 a CA-16)"
+        run: |
+          godot --headless -s tests/test_runner.gd

@@ -21,6 +21,8 @@ var benzedeira_heal_timer: float = 0.0
 
 # Animações procedurais vivas e dinâmicas
 var walk_anim_timer: float = 0.0
+var last_step_sin: float = 0.0
+var footstep_dust: Array[Dictionary] = []
 var facing_sign: float = 1.0
 var candeia_node: Node2D = null
 var flame_node: Node2D = null
@@ -91,6 +93,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_update_lantern_physics(delta, input_vector)
+	_update_dust_particles(delta)
 
 ## Animação procedural viva de caminhada (Passadas, Bobbing e Inclinação)
 func _update_walk_animation(delta: float, input_vector: Vector2) -> void:
@@ -99,12 +102,40 @@ func _update_walk_animation(delta: float, input_vector: Vector2) -> void:
 	walk_anim_timer += delta * (velocity.length() / base_speed) * 16.0
 	
 	# Bobbing rítmico das passadas (o boneco sobe e desce ao pisar)
-	var bob_y: float = -absf(sin(walk_anim_timer)) * 2.8
+	var cur_sin: float = sin(walk_anim_timer)
+	var bob_y: float = -absf(cur_sin) * 2.8
 	visual_root.position.y = bob_y
+	
+	# Emite puff de poeira seca a cada impacto de passada no solo do sertão
+	if last_step_sin > 0.0 and cur_sin <= 0.0:
+		_spawn_footstep_dust(input_vector)
+	last_step_sin = cur_sin
 	
 	# Inclinação corporal na direção do movimento (lean/tilt de corrida)
 	var lean_target: float = (input_vector.x * 0.12) + (sin(walk_anim_timer * 0.5) * 0.05)
 	visual_root.rotation = lerp_angle(visual_root.rotation, lean_target, delta * 15.0)
+
+func _spawn_footstep_dust(input_vector: Vector2) -> void:
+	footstep_dust.append({
+		"pos": Vector2(randf_range(-3.0, 3.0), 4.0),
+		"vel": (-input_vector * randf_range(6.0, 14.0)) + Vector2(randf_range(-4.0, 4.0), randf_range(-2.0, -6.0)),
+		"radius": randf_range(2.0, 3.5),
+		"life": 0.25,
+		"max_life": 0.25
+	})
+
+func _update_dust_particles(delta: float) -> void:
+	var idx: int = footstep_dust.size() - 1
+	while idx >= 0:
+		var d: Dictionary = footstep_dust[idx]
+		d["life"] -= delta
+		d["pos"] += d["vel"] * delta
+		d["radius"] *= (1.0 + delta * 2.5) # Expansão da nuvem
+		if d["life"] <= 0.0:
+			footstep_dust.remove_at(idx)
+		idx -= 1
+	if not footstep_dust.is_empty():
+		queue_redraw()
 
 ## Animação de espera com respiração suave (Squash & Stretch em Idle)
 func _update_idle_animation(delta: float) -> void:
@@ -185,6 +216,11 @@ func _end_reza_forte() -> void:
 	queue_redraw()
 
 func _draw() -> void:
+	# Poeira de terra seca levantada pelas passadas no sertão
+	for d in footstep_dust:
+		var alpha: float = (d["life"] / d["max_life"]) * 0.42
+		draw_circle(d["pos"], d["radius"], Color(0.72, 0.62, 0.48, alpha))
+		
 	if is_reza_forte_active:
 		# Aura sagrada dourada pulsando
 		var pulse: float = (sin(Time.get_ticks_msec() * 0.01) * 10.0) + 130.0

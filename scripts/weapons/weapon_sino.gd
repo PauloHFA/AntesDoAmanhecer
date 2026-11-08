@@ -39,6 +39,11 @@ func _physics_process(delta: float) -> void:
 func _trigger_bell_toll() -> void:
 	wave_radius = 10.0
 	
+	var audio_mgrs: Array[Node] = get_tree().get_nodes_in_group("audio")
+	if audio_mgrs.size() > 0:
+		var audio: AudioManager = audio_mgrs[0] as AudioManager
+		audio.play_sfx_pitch(audio.sfx_fanfare, 0.72)
+	
 	var juice_nodes: Array[Node] = get_tree().get_nodes_in_group("juice")
 	if juice_nodes.size() > 0:
 		var j: JuiceController = juice_nodes[0] as JuiceController

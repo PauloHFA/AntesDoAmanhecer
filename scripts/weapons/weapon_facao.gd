@@ -49,6 +49,11 @@ func _execute_slash() -> void:
 	# Micro-avanço corporal (Lunge de estocada) para dar peso ao golpe
 	if is_instance_valid(player_ref) and player_ref.visual_root:
 		player_ref.visual_root.position += facing * 4.5
+		
+	var audio_mgrs: Array[Node] = get_tree().get_nodes_in_group("audio")
+	if audio_mgrs.size() > 0:
+		var audio: AudioManager = audio_mgrs[0] as AudioManager
+		audio.play_sfx_slash()
 	
 	var swarm_nodes: Array[Node] = get_tree().get_nodes_in_group("swarm_manager")
 	if swarm_nodes.size() > 0:

@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://scripts/fx/damage_number_pool.gd" id="14_dmgpool"]
 [ext_resource type="Script" path="res://scripts/fx/death_particles_pool.gd" id="15_deathfx"]
 [ext_resource type="PackedScene" uid="uid://m1b2l3e4s5s6n" path="res://scenes/ui/milestone_blessings_menu.tscn" id="16_milestone"]
+[ext_resource type="PackedScene" uid="uid://p1a2u3s4e5m6n" path="res://scenes/ui/pause_menu.tscn" id="17_pause"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_altar"]
 size = Vector2(36, 36)
@@ -174,3 +175,5 @@ horizontal_alignment = 2
 [node name="ChestRouletteMenu" parent="CanvasLayer" instance=ExtResource("11_chest_ui")]
 
 [node name="MilestoneBlessingsMenu" parent="CanvasLayer" instance=ExtResource("16_milestone")]
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("17_pause")]

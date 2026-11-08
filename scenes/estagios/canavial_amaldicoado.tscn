@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://scripts/fx/damage_number_pool.gd" id="14_dmgpool"]
 [ext_resource type="Script" path="res://scripts/fx/death_particles_pool.gd" id="15_deathfx"]
 [ext_resource type="Resource" uid="uid://s_canavial_02" path="res://data/stages/canavial_amaldicoado.tres" id="16_stagedata"]
+[ext_resource type="PackedScene" uid="uid://p1a2u3s4e5m6n" path="res://scenes/ui/pause_menu.tscn" id="17_pause"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mill"]
 size = Vector2(40, 40)
@@ -213,6 +214,8 @@ value = 100.0
 [node name="LevelUpMenu" parent="CanvasLayer" instance=ExtResource("7_levelup")]
 
 [node name="ChestRouletteMenu" parent="CanvasLayer" instance=ExtResource("11_chest_ui")]
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("17_pause")]
 
 [node name="VictoryPanel" type="Panel" parent="CanvasLayer"]
 visible = false

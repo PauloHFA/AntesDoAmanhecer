@@ -58,6 +58,11 @@ func _fire() -> void:
 	if is_instance_valid(player_ref) and player_ref.visual_root:
 		player_ref.visual_root.position -= fire_dir * 3.5
 		
+	var audio_mgrs: Array[Node] = get_tree().get_nodes_in_group("audio")
+	if audio_mgrs.size() > 0:
+		var audio: AudioManager = audio_mgrs[0] as AudioManager
+		audio.play_sfx_gun()
+		
 	var origin: Vector2 = global_position
 	
 	if is_evolved:
