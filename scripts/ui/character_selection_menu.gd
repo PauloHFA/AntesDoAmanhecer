@@ -10,7 +10,9 @@ extends Control
 @onready var stats_label: Label = $VBoxContainer/DetailPanel/VBox/StatsLabel
 @onready var special_label: Label = $VBoxContainer/DetailPanel/VBox/SpecialLabel
 @onready var passive_label: Label = $VBoxContainer/DetailPanel/VBox/PassiveLabel
-@onready var start_button: Button = $VBoxContainer/StartButton
+@onready var start_button: Button = $VBoxContainer/BottomButtons/StartButton
+@onready var candeeiro_button: Button = $VBoxContainer/BottomButtons/CandeeiroButton
+@onready var grimoire_button: Button = $VBoxContainer/BottomButtons/GrimoireButton
 
 const CLASS_RESOURCES: Array[String] = [
 	"res://data/classes/benzedeira.tres",
@@ -29,6 +31,14 @@ func _ready() -> void:
 	_populate_buttons()
 	if start_button:
 		start_button.pressed.connect(_on_start_pressed)
+	if candeeiro_button:
+		candeeiro_button.pressed.connect(func() -> void:
+			get_tree().change_scene_to_file("res://scenes/menu/candeeiro_store.tscn")
+		)
+	if grimoire_button:
+		grimoire_button.pressed.connect(func() -> void:
+			get_tree().change_scene_to_file("res://scenes/menu/grimoire_menu.tscn")
+		)
 
 func _load_class_data() -> void:
 	loaded_classes.clear()

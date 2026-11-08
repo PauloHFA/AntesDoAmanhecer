@@ -1,0 +1,79 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1a2n3d4e5e6r"]
+
+[ext_resource type="Script" path="res://scripts/progression/candeeiro_store.gd" id="1_candeeiro"]
+
+[node name="CandeeiroStore" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_candeeiro")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.05, 0.09, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 14.0
+offset_right = -20.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "O CANDEEIRO · MELHORIAS PERMANENTES"
+
+[node name="Spacer" type="Control" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GoldLabel" type="Label" parent="VBoxContainer/TopBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "Ouro: 0"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="UpgradesContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="BottomBar" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="RefundButton" type="Button" parent="VBoxContainer/BottomBar"]
+custom_minimum_size = Vector2(140, 28)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "REEMBOLSAR TUDO"
+
+[node name="BackButton" type="Button" parent="VBoxContainer/BottomBar"]
+custom_minimum_size = Vector2(100, 28)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "VOLTAR"
