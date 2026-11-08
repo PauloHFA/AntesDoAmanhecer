@@ -129,14 +129,36 @@ func _populate_cards() -> void:
 	valid_candidates.shuffle()
 	var selected_cards: Array = valid_candidates.slice(0, mini(3, valid_candidates.size()))
 	
-	for card_data in selected_cards:
-		var btn: Button = _create_card_button(card_data)
+	for idx in range(selected_cards.size()):
+		var card_data: Dictionary = selected_cards[idx]
+		var btn: Button = _create_card_button(card_data, idx)
 		cards_container.add_child(btn)
 
-func _create_card_button(data: Dictionary) -> Button:
+func _create_card_button(data: Dictionary, card_index: int = 0) -> Button:
 	var btn: Button = Button.new()
 	btn.custom_minimum_size = Vector2(150, 120)
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.pivot_offset = Vector2(75, 60) # Centro da carta para rotação e escala elástica
+	
+	# Animação elástica de entrada em cascata (Pop-in staggered)
+	btn.scale = Vector2(0.4, 0.4)
+	btn.modulate.a = 0.0
+	var pop_tw: Tween = btn.create_tween()
+	pop_tw.tween_interval(float(card_index) * 0.06)
+	pop_tw.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	pop_tw.parallel().tween_property(btn, "modulate:a", 1.0, 0.2)
+	
+	# Interatividade viva no passar do mouse (Hover Bounce & Glow)
+	btn.mouse_entered.connect(func() -> void:
+		var hover_tw: Tween = btn.create_tween()
+		hover_tw.tween_property(btn, "scale", Vector2(1.08, 1.08), 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		hover_tw.parallel().tween_property(btn, "modulate", Color(1.25, 1.25, 1.25), 0.12)
+	)
+	btn.mouse_exited.connect(func() -> void:
+		var exit_tw: Tween = btn.create_tween()
+		exit_tw.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.12)
+		exit_tw.parallel().tween_property(btn, "modulate", Color.WHITE, 0.12)
+	)
 	
 	var vbox: VBoxContainer = VBoxContainer.new()
 	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)

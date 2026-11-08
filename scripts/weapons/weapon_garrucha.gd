@@ -12,6 +12,8 @@ extends Node2D
 @export var is_evolved: bool = false # Trovão do Sertão
 
 var attack_timer: float = 0.0
+var muzzle_flash_timer: float = 0.0
+var last_fire_dir: Vector2 = Vector2.RIGHT
 var player_ref: Player = null
 
 class Bullet:
@@ -33,6 +35,9 @@ func _physics_process(delta: float) -> void:
 		attack_timer = 0.0
 		_fire()
 		
+	if muzzle_flash_timer > 0.0:
+		muzzle_flash_timer -= delta
+		
 	_update_bullets(delta)
 	queue_redraw()
 
@@ -45,6 +50,13 @@ func _fire() -> void:
 	var fire_dir: Vector2 = player_ref.facing_direction
 	if fire_dir == Vector2.ZERO:
 		fire_dir = Vector2.RIGHT
+		
+	last_fire_dir = fire_dir
+	muzzle_flash_timer = 0.09
+	
+	# Coice da arma no corpo do jogador (Recoil kickback)
+	if is_instance_valid(player_ref) and player_ref.visual_root:
+		player_ref.visual_root.position -= fire_dir * 3.5
 		
 	var origin: Vector2 = global_position
 	
@@ -85,11 +97,37 @@ func _update_bullets(delta: float) -> void:
 		i -= 1
 
 func _draw() -> void:
+	# Clarão de Pólvora e Fogo na boca do cano (Muzzle Flash)
+	if muzzle_flash_timer > 0.0:
+		var muzzle_pos: Vector2 = last_fire_dir * 18.0
+		var flash_color: Color = Color(2.5, 2.2, 0.6, 1.0) if not is_evolved else Color(0.8, 2.2, 2.5, 1.0)
+		
+		# Cruz de labareda explosiva
+		var perp: Vector2 = Vector2(-last_fire_dir.y, last_fire_dir.x)
+		var star_poly: PackedVector2Array = PackedVector2Array([
+			muzzle_pos + (last_fire_dir * 9.0),
+			muzzle_pos + (perp * 4.0),
+			muzzle_pos - (last_fire_dir * 4.0),
+			muzzle_pos - (perp * 4.0)
+		])
+		draw_colored_polygon(star_poly, flash_color)
+		draw_circle(muzzle_pos, 4.0, Color(2.5, 2.5, 2.5, 0.9))
+		# Fumaça cinza de pólvora
+		draw_circle(muzzle_pos + perp * 2.0, 3.0, Color(0.6, 0.6, 0.65, 0.45))
+		
+	# Projéteis rápidos com rastro alongado e núcleo incandescente
 	for b in active_bullets:
 		var local_pos: Vector2 = to_local(b.position)
-		var bullet_col: Color = Color(1.0, 0.9, 0.3) if not is_evolved else Color(0.3, 0.9, 1.0)
-		draw_circle(local_pos, 3.5, bullet_col)
-		draw_line(local_pos, local_pos - (b.velocity.normalized() * 8.0), bullet_col, 1.5)
+		var bullet_dir: Vector2 = b.velocity.normalized()
+		var bullet_col: Color = Color(1.0, 0.85, 0.25) if not is_evolved else Color(0.2, 0.85, 1.0)
+		var core_col: Color = Color(2.5, 2.5, 2.0)
+		
+		# Rastro alongado (Tracer)
+		var tail_pos: Vector2 = local_pos - (bullet_dir * 14.0)
+		draw_line(local_pos, tail_pos, bullet_col, 2.5)
+		# Cabeça do projétil incandescente
+		draw_circle(local_pos, 3.0, core_col)
+		draw_circle(local_pos - (bullet_dir * 3.0), 2.0, bullet_col)
 
 func evolve_weapon() -> void:
 	is_evolved = true

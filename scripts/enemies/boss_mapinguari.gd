@@ -71,6 +71,15 @@ func _physics_process(delta: float) -> void:
 		BossState.SLAM_TELEGRAPH:
 			velocity = Vector2.ZERO
 			slam_telegraph_timer -= delta
+			
+			# Animação de Antecipação: O monstro se ergue, estica para trás e treme de fúria
+			if visual:
+				var p: float = 1.0 - (slam_telegraph_timer / 0.9)
+				var cur_facing: float = -1.0 if visual.scale.x < 0 else 1.0
+				visual.scale.y = 1.0 + (p * 0.45)
+				visual.scale.x = cur_facing * (1.0 - p * 0.22)
+				visual.position.x = randf_range(-2.5, 2.5) * p
+				
 			queue_redraw()
 			if slam_telegraph_timer <= 0.0:
 				_execute_slam()
@@ -78,10 +87,20 @@ func _physics_process(delta: float) -> void:
 		BossState.CHARGE:
 			velocity = charge_direction * 150.0
 			charge_duration_timer -= delta
+			
+			# Animação de Investida Feroz: Corpo inclinado agressivamente para frente
+			if visual:
+				var cur_facing: float = -1.0 if charge_direction.x < 0 else 1.0
+				visual.scale = Vector2(cur_facing * 1.25, 0.82)
+				visual.rotation = charge_direction.x * 0.12
+				
 			move_and_slide()
 			if charge_duration_timer <= 0.0:
 				state = BossState.CHASE
 				charge_cooldown_timer = 10.0
+				if visual:
+					visual.rotation = 0.0
+					visual.position = Vector2.ZERO
 
 	_check_contact_damage()
 
@@ -93,6 +112,14 @@ func _execute_slam() -> void:
 	state = BossState.CHASE
 	slam_cooldown_timer = 5.5
 	queue_redraw()
+	
+	# Impacto Brutal no Solo: Esmagamento elástico (Squash & Stretch de impacto)
+	if visual:
+		var cur_facing: float = -1.0 if visual.scale.x < 0 else 1.0
+		visual.scale = Vector2(cur_facing * 1.55, 0.55)
+		visual.position = Vector2.ZERO
+		var tw: Tween = create_tween()
+		tw.tween_property(visual, "scale", Vector2(cur_facing * 1.0, 1.0), 0.32).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	
 	# Efeito de tremor de tela
 	var juice_nodes: Array[Node] = get_tree().get_nodes_in_group("juice")

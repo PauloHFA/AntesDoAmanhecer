@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://scripts/fx/juice_controller.gd" id="13_juice"]
 [ext_resource type="Script" path="res://scripts/fx/damage_number_pool.gd" id="14_dmgpool"]
 [ext_resource type="Script" path="res://scripts/fx/death_particles_pool.gd" id="15_deathfx"]
+[ext_resource type="PackedScene" uid="uid://m1s2u3m4m5a6r" path="res://scenes/ui/match_summary_modal.tscn" id="16_summary"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rock"]
 size = Vector2(32, 32)
@@ -220,6 +221,8 @@ value = 100.0
 [node name="LevelUpMenu" parent="CanvasLayer" instance=ExtResource("7_levelup")]
 
 [node name="ChestRouletteMenu" parent="CanvasLayer" instance=ExtResource("11_chest_ui")]
+
+[node name="MatchSummaryModal" parent="CanvasLayer" instance=ExtResource("16_summary")]
 
 [node name="VictoryPanel" type="Panel" parent="CanvasLayer"]
 visible = false

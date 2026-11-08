@@ -155,15 +155,33 @@ func _physics_process(delta: float) -> void:
 			flash -= delta
 			hit_flash_times[i] = maxf(flash, 0.0)
 			
-		# 4. Atualiza MultiMesh
+		# 4. Atualiza MultiMesh com animação procedural orgânica viva (Undulação, Flutuação e Squash no Dano)
 		var facing_scale_x: float = -1.0 if dir_to_player.x < 0 else 1.0
-		var xform: Transform2D = Transform2D(0.0, Vector2(facing_scale_x, 1.0), 0.0, pos)
+		var t_anim: float = float(Time.get_ticks_msec()) * 0.009 + float(i) * 0.75
+		var bob_offset: float = absf(sin(t_anim)) * 2.2
+		var squish: float = 1.0 + sin(t_anim * 1.3) * 0.12
+		var tilt: float = sin(t_anim * 0.8) * 0.08
+		
+		var scale_y: float = 1.0 / squish
+		if flash > 0.0:
+			# Deformação elástica de impacto
+			squish = 1.35
+			scale_y = 0.65
+			
+		var xform: Transform2D = Transform2D(tilt, Vector2(facing_scale_x * squish, scale_y), 0.0, Vector2(pos.x, pos.y - bob_offset))
 		multimesh.set_instance_transform_2d(i, xform)
 		
 		if flash > 0.0:
-			multimesh.set_instance_color(i, Color(2.5, 2.5, 2.5, 1.0)) # Flash branco puro
+			multimesh.set_instance_color(i, Color(2.8, 2.8, 2.8, 1.0)) # Flash branco puro
 		else:
-			multimesh.set_instance_color(i, Color(0.45, 0.18, 0.55, 1.0)) # Roxo noturno
+			# Variação procedural de matiz noturno folclórico
+			var tint_type: int = i % 3
+			if tint_type == 0:
+				multimesh.set_instance_color(i, Color(0.48, 0.18, 0.58, 1.0)) # Violeta
+			elif tint_type == 1:
+				multimesh.set_instance_color(i, Color(0.28, 0.22, 0.64, 1.0)) # Anil espectral
+			else:
+				multimesh.set_instance_color(i, Color(0.38, 0.14, 0.46, 1.0)) # Sombra profunda
 			
 	var elapsed_usec: int = Time.get_ticks_usec() - start_usec
 	last_simulation_time_ms = float(elapsed_usec) / 1000.0

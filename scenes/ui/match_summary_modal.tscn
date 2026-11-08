@@ -1,0 +1,99 @@
+[gd_scene load_steps=2 format=3 uid="uid://m1s2u3m4m5a6r"]
+
+[ext_resource type="Script" path="res://scripts/ui/match_summary_modal.gd" id="1_summary"]
+
+[node name="MatchSummaryModal" type="Control"]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_summary")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.75)
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -110.0
+offset_right = 160.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="PanelContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+text = "RESUMO DA PARTIDA"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="PanelContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 9
+text = "O sertão testemunhou sua resistência."
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBox"]
+layout_mode = 2
+
+[node name="StatsLabel" type="RichTextLabel" parent="PanelContainer/VBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 10
+bbcode_enabled = true
+text = "Estatísticas da Partida..."
+
+[node name="GoldSavedLabel" type="Label" parent="PanelContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.25, 1)
+theme_override_font_sizes/font_size = 10
+text = "+0 Moedas Salvas no Candeeiro"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBox"]
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="PanelContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="RetryButton" type="Button" parent="PanelContainer/VBox/Buttons"]
+custom_minimum_size = Vector2(85, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "JOGAR DE NOVO"
+
+[node name="CandeeiroButton" type="Button" parent="PanelContainer/VBox/Buttons"]
+custom_minimum_size = Vector2(90, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "O CANDEEIRO"
+
+[node name="MenuButton" type="Button" parent="PanelContainer/VBox/Buttons"]
+custom_minimum_size = Vector2(70, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "MENU"

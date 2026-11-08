@@ -19,6 +19,12 @@ var reza_forte_timer: float = 0.0
 # Passiva da Benzedeira: Cura 1 PV a cada 5s
 var benzedeira_heal_timer: float = 0.0
 
+# Animações procedurais vivas e dinâmicas
+var walk_anim_timer: float = 0.0
+var facing_sign: float = 1.0
+var candeia_node: Node2D = null
+var flame_node: Node2D = null
+
 var current_health: int
 var is_invulnerable: bool = false
 var facing_direction: Vector2 = Vector2.DOWN
@@ -34,6 +40,11 @@ func _ready() -> void:
 	invuln_timer.wait_time = invulnerability_duration
 	invuln_timer.one_shot = true
 	invuln_timer.timeout.connect(_on_invulnerability_timeout)
+	
+	if visual_root:
+		candeia_node = visual_root.get_node_or_null("Candeia")
+		if candeia_node:
+			flame_node = candeia_node.get_node_or_null("Flame")
 	
 	if hurtbox:
 		hurtbox.area_entered.connect(_on_hurtbox_area_entered)
@@ -73,10 +84,55 @@ func _physics_process(delta: float) -> void:
 		facing_direction = input_vector
 		velocity = input_vector * base_speed
 		update_facing(input_vector)
+		_update_walk_animation(delta, input_vector)
 	else:
 		velocity = Vector2.ZERO
+		_update_idle_animation(delta)
 
 	move_and_slide()
+	_update_lantern_physics(delta, input_vector)
+
+## Animação procedural viva de caminhada (Passadas, Bobbing e Inclinação)
+func _update_walk_animation(delta: float, input_vector: Vector2) -> void:
+	if not visual_root:
+		return
+	walk_anim_timer += delta * (velocity.length() / base_speed) * 16.0
+	
+	# Bobbing rítmico das passadas (o boneco sobe e desce ao pisar)
+	var bob_y: float = -absf(sin(walk_anim_timer)) * 2.8
+	visual_root.position.y = bob_y
+	
+	# Inclinação corporal na direção do movimento (lean/tilt de corrida)
+	var lean_target: float = (input_vector.x * 0.12) + (sin(walk_anim_timer * 0.5) * 0.05)
+	visual_root.rotation = lerp_angle(visual_root.rotation, lean_target, delta * 15.0)
+
+## Animação de espera com respiração suave (Squash & Stretch em Idle)
+func _update_idle_animation(delta: float) -> void:
+	if not visual_root:
+		return
+	walk_anim_timer = 0.0
+	visual_root.position.y = lerpf(visual_root.position.y, 0.0, delta * 10.0)
+	visual_root.rotation = lerp_angle(visual_root.rotation, 0.0, delta * 10.0)
+	
+	# Respiração sutil de prontidão
+	var breath: float = sin(Time.get_ticks_msec() * 0.0035)
+	visual_root.scale.y = 1.0 + (breath * 0.035)
+	visual_root.scale.x = facing_sign * (1.0 - breath * 0.025)
+
+## Física inercial pendular da Candeia e crepitação da chama
+func _update_lantern_physics(delta: float, input_vector: Vector2) -> void:
+	if candeia_node:
+		# A lamparina balança com inércia para trás em relação à corrida
+		var sway_target: float = (-input_vector.x * 0.35) + cos(walk_anim_timer * 0.5) * 0.18
+		candeia_node.rotation = lerp_angle(candeia_node.rotation, sway_target, delta * 12.0)
+		
+	if flame_node:
+		# Chama crepita e deforma proceduralmente
+		var t: float = float(Time.get_ticks_msec()) * 0.02
+		flame_node.scale = Vector2(
+			1.0 + sin(t) * 0.2,
+			1.0 + cos(t * 1.2) * 0.3
+		)
 
 ## Retorna o vetor de movimentação em 8 direções normalizado
 func get_movement_input() -> Vector2:
@@ -93,8 +149,10 @@ func update_facing(dir: Vector2) -> void:
 	if not visual_root:
 		return
 	if dir.x < 0:
+		facing_sign = -1.0
 		visual_root.scale.x = -1.0
 	elif dir.x > 0:
+		facing_sign = 1.0
 		visual_root.scale.x = 1.0
 
 ## Ativa o Especial "Reza Forte" da Benzedeira (Seção 6, RF-12)
@@ -143,6 +201,25 @@ func take_damage(amount: int) -> void:
 	
 	modulate.a = 0.5
 	
+	# Efeito de Squash & Stretch de Impacto e Flash Carmesim (Juice Vivo)
+	if visual_root:
+		visual_root.scale = Vector2(facing_sign * 1.35, 0.65)
+		visual_root.modulate = Color(2.5, 0.4, 0.4, 1.0)
+		
+		var tw: Tween = create_tween()
+		tw.tween_property(visual_root, "scale", Vector2(facing_sign * 1.0, 1.0), 0.22).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		
+		get_tree().create_timer(0.08, false, false, true).timeout.connect(func() -> void:
+			if is_instance_valid(visual_root):
+				visual_root.modulate = Color.WHITE
+		)
+		
+	var juice_nodes: Array[Node] = get_tree().get_nodes_in_group("juice")
+	if juice_nodes.size() > 0:
+		var j: JuiceController = juice_nodes[0] as JuiceController
+		j.add_trauma(0.35)
+		j.hit_stop(45.0)
+	
 	if has_node("/root/EventBus"):
 		EventBus.player_damaged.emit(current_health, max_health)
 		
@@ -153,6 +230,13 @@ func heal(amount: int) -> void:
 	if is_dead or amount <= 0:
 		return
 	current_health = clampi(current_health + amount, 0, max_health)
+	
+	# Pulso suave de cura verde sagrado
+	if visual_root:
+		visual_root.modulate = Color(0.7, 1.5, 0.7, 1.0)
+		var tw: Tween = create_tween()
+		tw.tween_property(visual_root, "modulate", Color.WHITE, 0.3)
+		
 	if has_node("/root/EventBus"):
 		EventBus.player_healed.emit(current_health, max_health)
 
@@ -167,8 +251,28 @@ func _on_enemy_killed(_type: String, _pos: Vector2, _gem: bool) -> void:
 	add_fury(2.5) # 40 abates enchem a barra completa de fúria
 
 func die() -> void:
+	if is_dead:
+		return
 	is_dead = true
 	velocity = Vector2.ZERO
+	
+	# Animação dramática de morte: giro, encolhimento e cinzas
+	if visual_root:
+		var death_tw: Tween = create_tween()
+		death_tw.parallel().tween_property(visual_root, "rotation", TAU * 1.5, 0.45).set_trans(Tween.TRANS_BACK)
+		death_tw.parallel().tween_property(visual_root, "scale", Vector2.ZERO, 0.45).set_trans(Tween.TRANS_BACK)
+		
+	var fx_pools: Array[Node] = get_tree().get_nodes_in_group("death_fx_pool")
+	if fx_pools.size() > 0:
+		var fx: DeathParticlesPool = fx_pools[0] as DeathParticlesPool
+		fx.spawn_death_burst(global_position)
+		
+	var juice_nodes: Array[Node] = get_tree().get_nodes_in_group("juice")
+	if juice_nodes.size() > 0:
+		var j: JuiceController = juice_nodes[0] as JuiceController
+		j.add_trauma(0.75)
+		j.hit_stop(80.0)
+		
 	if has_node("/root/EventBus"):
 		EventBus.player_died.emit()
 

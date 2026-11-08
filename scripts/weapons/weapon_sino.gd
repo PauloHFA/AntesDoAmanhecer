@@ -38,6 +38,12 @@ func _physics_process(delta: float) -> void:
 
 func _trigger_bell_toll() -> void:
 	wave_radius = 10.0
+	
+	var juice_nodes: Array[Node] = get_tree().get_nodes_in_group("juice")
+	if juice_nodes.size() > 0:
+		var j: JuiceController = juice_nodes[0] as JuiceController
+		j.add_trauma(0.22)
+		j.hit_stop(35.0)
 
 func _draw() -> void:
 	if wave_radius < 0.0:
@@ -45,8 +51,28 @@ func _draw() -> void:
 		
 	var max_r: float = wave_max_radius * (1.5 if is_evolved else 1.0)
 	var alpha: float = 1.0 - (wave_radius / max_r)
-	var wave_color: Color = Color(1.0, 0.9, 0.4, alpha * 0.8) if not is_evolved else Color(0.4, 0.9, 1.0, alpha * 0.9)
-	draw_arc(Vector2.ZERO, wave_radius, 0.0, TAU, 32, wave_color, 3.5)
+	var wave_color: Color = Color(1.0, 0.92, 0.4, alpha * 0.85) if not is_evolved else Color(0.3, 0.95, 1.0, alpha * 0.95)
+	var wave_color_inner: Color = Color(1.0, 0.75, 0.2, alpha * 0.45) if not is_evolved else Color(0.2, 0.5, 1.0, alpha * 0.45)
+	
+	# Onda acústica primária de choque (Borda externa viva)
+	draw_arc(Vector2.ZERO, wave_radius, 0.0, TAU, 36, wave_color, 4.0)
+	
+	# Onda secundária de ressonância (Eco do sino)
+	if wave_radius > 25.0:
+		draw_arc(Vector2.ZERO, wave_radius * 0.78, 0.0, TAU, 32, wave_color_inner, 2.0)
+		
+	# Pêndulo do sino místico badalando acima da cabeça
+	if wave_radius < max_r * 0.6:
+		var bell_pos: Vector2 = Vector2(0, -32)
+		var swing: float = sin(wave_radius * 0.15) * 6.0
+		var bell_poly: PackedVector2Array = PackedVector2Array([
+			bell_pos + Vector2(-6 + swing, 0),
+			bell_pos + Vector2(6 + swing, 0),
+			bell_pos + Vector2(4 + swing, -10),
+			bell_pos + Vector2(-4 + swing, -10)
+		])
+		draw_colored_polygon(bell_poly, Color(1.0, 0.85, 0.3, alpha))
+		draw_circle(bell_pos + Vector2(swing, 2), 2.5, Color(1.0, 0.95, 0.6, alpha))
 
 func evolve_weapon() -> void:
 	is_evolved = true

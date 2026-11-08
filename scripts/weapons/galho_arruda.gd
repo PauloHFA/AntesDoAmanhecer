@@ -24,13 +24,17 @@ func _physics_process(delta: float) -> void:
 	if current_angle > TAU:
 		current_angle -= TAU
 		
-	# Atualiza a posição de cada ramo orbital
+	# Atualiza a posição de cada ramo orbital com ondulação elíptica viva
 	var step_angle: float = TAU / float(maxi(branches_count, 1))
 	for i in range(branch_nodes.size()):
 		var angle: float = current_angle + (i * step_angle)
-		var offset: Vector2 = Vector2(cos(angle), sin(angle)) * orbit_radius
+		var wobble: float = sin(current_angle * 2.5 + float(i)) * 3.0
+		var r: float = orbit_radius + wobble
+		var offset: Vector2 = Vector2(cos(angle), sin(angle)) * r
 		branch_nodes[i].position = offset
-		branch_nodes[i].rotation = angle + (PI * 0.5)
+		branch_nodes[i].rotation = angle + (PI * 0.5) + (sin(current_angle * 4.0) * 0.15)
+		
+	queue_redraw()
 		
 	# Dano contra o enxame em lote via SpatialHashGrid (T3, Seção 12.2)
 	swarm_tick_timer += delta
@@ -41,6 +45,20 @@ func _physics_process(delta: float) -> void:
 			var swarm: EnemySwarmManager = swarm_nodes[0] as EnemySwarmManager
 			for b in branch_nodes:
 				swarm.damage_in_radius(b.global_position, 14.0, base_damage, 10.0)
+
+func _draw() -> void:
+	# Anel sutil de energia sagrada protetora ao redor do Vigilante
+	draw_arc(Vector2.ZERO, orbit_radius, 0.0, TAU, 32, Color(0.4, 0.9, 0.35, 0.12), 1.5)
+	
+	# Rastros luminosos de folhas e bênçãos sagradas
+	var step_angle: float = TAU / float(maxi(branches_count, 1))
+	for i in range(branch_nodes.size()):
+		var angle: float = current_angle + (i * step_angle)
+		for t in range(1, 4):
+			var trail_angle: float = angle - (float(t) * 0.12)
+			var trail_pos: Vector2 = Vector2(cos(trail_angle), sin(trail_angle)) * orbit_radius
+			var trail_alpha: float = 0.35 / float(t)
+			draw_circle(trail_pos, 3.0 - float(t) * 0.6, Color(0.7, 1.0, 0.3, trail_alpha))
 
 	# Limpa cooldowns antigos
 	var current_time: float = Time.get_ticks_msec() / 1000.0

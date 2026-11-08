@@ -17,6 +17,7 @@ extends Node2D
 @onready var kills_label: Label = $CanvasLayer/HUD/TopRight/KillsLabel
 @onready var gold_label: Label = $CanvasLayer/HUD/TopRight/GoldLabel
 @onready var victory_panel: Panel = $CanvasLayer/VictoryPanel
+@onready var match_summary_modal: MatchSummaryModal = $CanvasLayer/MatchSummaryModal
 
 # HUD de Chefe
 @onready var boss_hud: VBoxContainer = $CanvasLayer/BossHUD
@@ -116,6 +117,16 @@ func _on_player_died() -> void:
 	if health_label:
 		health_label.text = "CANDEIA APAGADA (A Noite Engoliu a Vila)"
 		health_label.modulate = Color(1.0, 0.2, 0.2)
+		
+	var elapsed: float = 1200.0 - (night_controller.time_remaining if night_controller else 1200.0)
+	var final_lvl: int = progression.current_level if progression else 1
+	var total_kills: int = progression.total_kills if progression else 0
+	
+	if match_summary_modal:
+		# Breve delay dramático para acompanhar a animação de morte
+		get_tree().create_timer(0.5, false, false, true).timeout.connect(func() -> void:
+			match_summary_modal.show_summary(false, elapsed, final_lvl, total_kills, total_gold_collected)
+		)
 
 func _on_xp_updated(_amount: int, current: int, target: int) -> void:
 	if xp_bar and level_label and progression:
@@ -133,5 +144,10 @@ func _on_gold_collected(amount: int, _total: int) -> void:
 		gold_label.text = "Ouro: %d" % total_gold_collected
 
 func _on_match_won() -> void:
-	if victory_panel:
+	var final_lvl: int = progression.current_level if progression else 1
+	var total_kills: int = progression.total_kills if progression else 0
+	
+	if match_summary_modal:
+		match_summary_modal.show_summary(true, 1200.0, final_lvl, total_kills, total_gold_collected)
+	elif victory_panel:
 		victory_panel.visible = true

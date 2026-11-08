@@ -94,6 +94,12 @@ func load_game() -> bool:
 			
 	return true
 
+## Adiciona ouro e salva atomicamente no disco (CA-12, CA-16)
+func add_gold(amount: int) -> void:
+	if amount > 0:
+		total_gold += amount
+		save_game()
+
 ## Desbloqueia uma entrada no Grimório (CA-08)
 func unlock_grimoire_entry(entry_id: String) -> bool:
 	if not grimoire_unlocked.has(entry_id):
