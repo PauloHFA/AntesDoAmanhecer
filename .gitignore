@@ -10,7 +10,8 @@ mono_crash.*.json
 # System / Editor ignores
 .import/
 export.cfg
-export_presets.cfg
+builds/
+*.tmp
 
 # OS specific
 .DS_Store

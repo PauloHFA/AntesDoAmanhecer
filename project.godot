@@ -8,14 +8,16 @@ config_version=5
 
 config/name="Antes do Amanhecer"
 config/description="Roguelite de sobrevivência em hordas inspirado no folclore brasileiro."
-config/version="0.1.0"
-run/main_scene="res://scenes/partida/partida_teste.tscn"
+config/version="1.0.0"
+run/main_scene="res://scenes/menu/main_menu.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 EventBus="*res://scripts/core/event_bus.gd"
+SettingsManager="*res://scripts/core/settings_manager.gd"
+AudioManager="*res://scripts/core/audio_manager.gd"
 
 [display]
 
