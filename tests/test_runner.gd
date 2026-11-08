@@ -84,6 +84,20 @@ func run_all_suites() -> void:
 			failed_tests += 1
 			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
 			
+	log_lines.append("")
+
+	# Suíte 6: Armas, Passivas e Evoluções em Baú (CA-04, CA-07)
+	log_lines.append("[b][color=#118ab2]-- Suíte: Armas, Passivas e Evoluções (CA-04, CA-07) --[/color][/b]")
+	var sprint4_results: Array[Dictionary] = TestSprint4WeaponsEvolutions.run_all_tests()
+	for res in sprint4_results:
+		total_tests += 1
+		if res["passed"]:
+			passed_tests += 1
+			log_lines.append("[color=#06d6a0]  [PASS][/color] %s" % res["name"])
+		else:
+			failed_tests += 1
+			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
+			
 	log_lines.append("\n------------------------------------------------------------")
 	var summary_text: String = "Testes Executados: %d | Aprovados: %d | Falhas: %d" % [total_tests, passed_tests, failed_tests]
 	
