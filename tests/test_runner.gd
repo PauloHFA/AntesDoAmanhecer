@@ -56,6 +56,20 @@ func run_all_suites() -> void:
 			failed_tests += 1
 			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
 			
+	log_lines.append("")
+
+	# Suíte 4: Grade Espacial (SpatialHashGrid - T3, Seção 12.2)
+	log_lines.append("[b][color=#118ab2]-- Suíte: Grade Espacial (T3, CA-14) --[/color][/b]")
+	var grid_results: Array[Dictionary] = TestSpatialHashGrid.run_all_tests()
+	for res in grid_results:
+		total_tests += 1
+		if res["passed"]:
+			passed_tests += 1
+			log_lines.append("[color=#06d6a0]  [PASS][/color] %s" % res["name"])
+		else:
+			failed_tests += 1
+			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
+			
 	log_lines.append("\n------------------------------------------------------------")
 	var summary_text: String = "Testes Executados: %d | Aprovados: %d | Falhas: %d" % [total_tests, passed_tests, failed_tests]
 	

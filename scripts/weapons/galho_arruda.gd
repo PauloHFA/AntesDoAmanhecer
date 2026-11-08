@@ -13,6 +13,7 @@ extends Node2D
 var current_angle: float = 0.0
 var branch_nodes: Array[Area2D] = []
 var enemy_damage_cooldowns: Dictionary = {} # Enemy instance_id -> float timestamp
+var swarm_tick_timer: float = 0.0
 
 func _ready() -> void:
 	add_to_group("weapons")
@@ -31,6 +32,16 @@ func _physics_process(delta: float) -> void:
 		branch_nodes[i].position = offset
 		branch_nodes[i].rotation = angle + (PI * 0.5)
 		
+	# Dano contra o enxame em lote via SpatialHashGrid (T3, Seção 12.2)
+	swarm_tick_timer += delta
+	if swarm_tick_timer >= 0.2:
+		swarm_tick_timer = 0.0
+		var swarm_nodes: Array[Node] = get_tree().get_nodes_in_group("swarm_manager")
+		if swarm_nodes.size() > 0:
+			var swarm: EnemySwarmManager = swarm_nodes[0] as EnemySwarmManager
+			for b in branch_nodes:
+				swarm.damage_in_radius(b.global_position, 14.0, base_damage, 10.0)
+
 	# Limpa cooldowns antigos
 	var current_time: float = Time.get_ticks_msec() / 1000.0
 	var keys_to_remove: Array = []

@@ -1,16 +1,68 @@
-[gd_scene load_steps=2 format=3 uid="uid://f4k3j2h1g9m8n"]
+[gd_scene load_steps=6 format=3 uid="uid://f4k3j2h1g9m8n"]
 
 [ext_resource type="Script" path="res://tests/benchmarks/benchmark_swarm.gd" id="1_benchmark"]
+[ext_resource type="Script" path="res://scenes/partida/ground_grid.gd" id="2_grid"]
+[ext_resource type="PackedScene" uid="uid://b574jyh4q1n2p" path="res://scenes/player/player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_swarm_manager.gd" id="4_swarm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.06, 0.08, 0.12, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
 
 [node name="BenchmarkSwarm" type="Node2D"]
 script = ExtResource("1_benchmark")
 
+[node name="GroundGrid" type="Node2D" parent="."]
+script = ExtResource("2_grid")
+grid_width = 80
+grid_height = 80
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+position = Vector2(0, 0)
+
+[node name="EnemySwarmManager" type="Node2D" parent="."]
+script = ExtResource("4_swarm")
+max_capacity = 2500
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="StatsLabel" type="Label" parent="CanvasLayer"]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 320.0
-offset_bottom = 80.0
+[node name="StatsPanel" type="PanelContainer" parent="CanvasLayer"]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 480.0
+offset_bottom = 110.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/StatsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="CanvasLayer/StatsPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
 theme_override_font_sizes/font_size = 12
-text = "Benchmark inicializando..."
+text = "BENCHMARK DE HORDAS (M1 SPIKE - CA-14 / RNF-01)"
+
+[node name="StatsLabel" type="RichTextLabel" parent="CanvasLayer/StatsPanel/VBoxContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "Calculando telemetria..."
+fit_content = true
+
+[node name="CPUTimeLabel" type="Label" parent="CanvasLayer/StatsPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Uso de CPU da Simulação: 0.0 ms / 4.0 ms meta"
+
+[node name="CPUTimeBar" type="ProgressBar" parent="CanvasLayer/StatsPanel/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 8)
+max_value = 16.6
+show_percentage = false
