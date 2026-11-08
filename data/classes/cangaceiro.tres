@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CharacterClassData" load_steps=2 format=3 uid="uid://c_cangaceiro_02"]
+
+[ext_resource type="Script" path="res://scripts/player/character_class_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+class_id = "cangaceiro"
+display_name = "Cangaceiro"
+archetype = "Dano à Distância"
+starting_weapon_id = "garrucha"
+health_percent = 90.0
+speed_percent = 105.0
+damage_percent = 110.0
+special_name = "Rajada do Sertão"
+special_description = "Dispara tiros contínuos em 360 graus por 4s."
+special_duration = 4.0
+passive_description = "+15% velocidade de projétil; tiros perfuram a partir do nível 5."

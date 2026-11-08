@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CharacterClassData" load_steps=2 format=3 uid="uid://c_benzedeira_01"]
+
+[ext_resource type="Script" path="res://scripts/player/character_class_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+class_id = "benzedeira"
+display_name = "Benzedeira"
+archetype = "Suporte e Área"
+starting_weapon_id = "galho_arruda"
+health_percent = 100.0
+speed_percent = 100.0
+damage_percent = 100.0
+special_name = "Reza Forte"
+special_description = "Onda sagrada que empurra e fere tudo por 5s."
+special_duration = 5.0
+passive_description = "Cura 1 PV a cada 5s e +10% de área."

@@ -28,10 +28,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -100.0
-offset_right = 260.0
-offset_bottom = 100.0
+offset_left = -270.0
+offset_top = -115.0
+offset_right = 270.0
+offset_bottom = 115.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -46,6 +46,7 @@ offset_right = -12.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 6
 
 [node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
 layout_mode = 2
@@ -67,5 +68,28 @@ layout_mode = 2
 [node name="CardsContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="ActionButtons" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
+
+[node name="RerollBtn" type="Button" parent="Panel/VBoxContainer/ActionButtons"]
+custom_minimum_size = Vector2(90, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Rolar (2)"
+
+[node name="BanBtn" type="Button" parent="Panel/VBoxContainer/ActionButtons"]
+custom_minimum_size = Vector2(90, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Banir (1)"
+
+[node name="SkipBtn" type="Button" parent="Panel/VBoxContainer/ActionButtons"]
+custom_minimum_size = Vector2(90, 24)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Pular (2)"

@@ -1,12 +1,18 @@
 class_name LevelUpMenu
 extends Control
 
-## Menu de Seleção de Cartas de Poder ao Subir de Nível (RF-05, CA-03, CA-04)
-## Executa com PROCESS_MODE_WHEN_PAUSED para permitir interação enquanto o jogo está pausado.
-## Descarta poderes já maximizados (CA-04).
+## Menu de Seleção de Cartas de Poder ao Subir de Nível (RF-05, RF-06, CA-03, CA-04, CA-05)
+## Executa com PROCESS_MODE_WHEN_PAUSED. Suporta Reroll, Banir e Pular (CA-05).
+
+@export var rerolls_left: int = 2
+@export var bans_left: int = 1
+@export var skips_left: int = 2
 
 @onready var title_label: Label = $Panel/VBoxContainer/TitleLabel
 @onready var cards_container: HBoxContainer = $Panel/VBoxContainer/CardsContainer
+@onready var reroll_btn: Button = $Panel/VBoxContainer/ActionButtons/RerollBtn
+@onready var ban_btn: Button = $Panel/VBoxContainer/ActionButtons/BanBtn
+@onready var skip_btn: Button = $Panel/VBoxContainer/ActionButtons/SkipBtn
 
 const ALL_UPGRADES: Array[Dictionary] = [
 	{
@@ -75,6 +81,7 @@ const ALL_UPGRADES: Array[Dictionary] = [
 ]
 
 var upgrade_levels: Dictionary = {}
+var banned_power_ids: Array[String] = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
@@ -82,20 +89,29 @@ func _ready() -> void:
 	
 	if has_node("/root/EventBus"):
 		EventBus.level_up_triggered.connect(_on_level_up)
+		
+	if reroll_btn: reroll_btn.pressed.connect(_on_reroll_pressed)
+	if ban_btn: ban_btn.pressed.connect(_on_ban_pressed)
+	if skip_btn: skip_btn.pressed.connect(_on_skip_pressed)
+	_update_action_buttons()
 
 func _on_level_up(new_level: int) -> void:
 	title_label.text = "NOVO NÍVEL ALCANÇADO: %d" % new_level
 	_populate_cards()
+	_update_action_buttons()
 	visible = true
 
 func _populate_cards() -> void:
 	for child in cards_container.get_children():
 		child.queue_free()
 		
-	# Filtra cartas válidas que ainda não atingiram o nível máximo (CA-04)
+	# Filtra cartas válidas: descarta maximizados (CA-04) e banidos (CA-05)
 	var valid_candidates: Array[Dictionary] = []
 	for card in ALL_UPGRADES:
 		var card_id: String = card["id"]
+		if banned_power_ids.has(card_id):
+			continue # Ignora banidos
+			
 		var current_lvl: int = upgrade_levels.get(card_id, 0)
 		var max_lvl: int = 5 if card["type"] == "passive" else 8
 		if current_lvl < max_lvl:
@@ -119,7 +135,7 @@ func _populate_cards() -> void:
 
 func _create_card_button(data: Dictionary) -> Button:
 	var btn: Button = Button.new()
-	btn.custom_minimum_size = Vector2(160, 130)
+	btn.custom_minimum_size = Vector2(150, 120)
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var vbox: VBoxContainer = VBoxContainer.new()
@@ -128,7 +144,7 @@ func _create_card_button(data: Dictionary) -> Button:
 	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	var color_rect: ColorRect = ColorRect.new()
-	color_rect.custom_minimum_size = Vector2(140, 24)
+	color_rect.custom_minimum_size = Vector2(130, 20)
 	color_rect.color = data["icon_color"]
 	color_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(color_rect)
@@ -136,7 +152,7 @@ func _create_card_button(data: Dictionary) -> Button:
 	var t_label: Label = Label.new()
 	t_label.text = data["title"]
 	t_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	t_label.theme_override_font_sizes/font_size = 11
+	t_label.theme_override_font_sizes/font_size = 10
 	t_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(t_label)
 	
@@ -144,7 +160,7 @@ func _create_card_button(data: Dictionary) -> Button:
 	d_label.text = data["desc"]
 	d_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	d_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	d_label.theme_override_font_sizes/font_size = 9
+	d_label.theme_override_font_sizes/font_size = 8
 	d_label.theme_override_colors/font_color = Color(0.75, 0.8, 0.9)
 	d_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	vbox.add_child(d_label)
@@ -195,13 +211,59 @@ func _apply_card_and_close(data: Dictionary) -> void:
 	visible = false
 	get_tree().paused = false
 
+## Reroll: rola novas cartas gastando 1 uso (CA-05)
+func _on_reroll_pressed() -> void:
+	if rerolls_left > 0:
+		rerolls_left -= 1
+		_populate_cards()
+		_update_action_buttons()
+
+## Banir: remove uma das cartas para sempre gastando 1 uso (CA-05)
+func _on_ban_pressed() -> void:
+	if bans_left > 0 and cards_container.get_child_count() > 0:
+		bans_left -= 1
+		# Bane o primeiro candidato da tela
+		var first_child: Node = cards_container.get_child(0)
+		if first_child:
+			# Procura o id
+			for c in ALL_UPGRADES:
+				if not banned_power_ids.has(c["id"]):
+					banned_power_ids.append(c["id"])
+					break
+		_populate_cards()
+		_update_action_buttons()
+
+## Pular: ganha ouro/cura e retoma sem escolher (CA-05)
+func _on_skip_pressed() -> void:
+	if skips_left > 0:
+		skips_left -= 1
+		var players: Array[Node] = get_tree().get_nodes_in_group("player")
+		if players.size() > 0:
+			var p: Player = players[0] as Player
+			p.heal(25)
+		if has_node("/root/EventBus"):
+			EventBus.gold_collected.emit(25, 0)
+			
+		visible = false
+		get_tree().paused = false
+
+func _update_action_buttons() -> void:
+	if reroll_btn:
+		reroll_btn.text = "Rolar (%d)" % rerolls_left
+		reroll_btn.disabled = (rerolls_left <= 0)
+	if ban_btn:
+		ban_btn.text = "Banir (%d)" % bans_left
+		ban_btn.disabled = (bans_left <= 0)
+	if skip_btn:
+		skip_btn.text = "Pular (%d)" % skips_left
+		skip_btn.disabled = (skips_left <= 0)
+
 func _equip_weapon_to_player(player: Player, weapon_script: Script) -> void:
 	if not player or not weapon_script:
 		return
-	# Checa se já existe equipada
 	for child in player.get_children():
 		if child.get_script() == weapon_script:
-			return # Já tem a arma
+			return
 	var new_weapon: Node2D = Node2D.new()
 	new_weapon.set_script(weapon_script)
 	player.add_child(new_weapon)

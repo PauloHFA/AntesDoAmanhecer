@@ -126,6 +126,20 @@ func run_all_suites() -> void:
 			failed_tests += 1
 			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
 			
+	log_lines.append("")
+
+	# Suíte 9: As 6 Classes, Fusões Secretas e CA-05 (Reroll, Ban, Skip)
+	log_lines.append("[b][color=#118ab2]-- Suíte: Classes, Fusões Secretas e CA-05 --[/color][/b]")
+	var sprint7_results: Array[Dictionary] = TestSprint7ClassesAndFusions.run_all_tests()
+	for res in sprint7_results:
+		total_tests += 1
+		if res["passed"]:
+			passed_tests += 1
+			log_lines.append("[color=#06d6a0]  [PASS][/color] %s" % res["name"])
+		else:
+			failed_tests += 1
+			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
+			
 	log_lines.append("\n------------------------------------------------------------")
 	var summary_text: String = "Testes Executados: %d | Aprovados: %d | Falhas: %d" % [total_tests, passed_tests, failed_tests]
 	

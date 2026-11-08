@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CharacterClassData" load_steps=2 format=3 uid="uid://c_ferreiro_04"]
+
+[ext_resource type="Script" path="res://scripts/player/character_class_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+class_id = "ferreiro"
+display_name = "Ferreiro"
+archetype = "Tanque e Impacto"
+starting_weapon_id = "facao"
+health_percent = 140.0
+speed_percent = 85.0
+damage_percent = 95.0
+special_name = "Bigorna dos Céus"
+special_description = "Bigornas incandescentes caem do céu esmagando inimigos em área."
+special_duration = 5.0
+passive_description = "+20% de vida, reduz 1 de dano por golpe, empurra inimigos."

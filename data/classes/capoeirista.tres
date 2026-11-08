@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CharacterClassData" load_steps=2 format=3 uid="uid://c_capoeirista_03"]
+
+[ext_resource type="Script" path="res://scripts/player/character_class_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+class_id = "capoeirista"
+display_name = "Capoeirista"
+archetype = "Mobilidade e Corpo a Corpo"
+starting_weapon_id = "facao"
+health_percent = 95.0
+speed_percent = 115.0
+damage_percent = 100.0
+special_name = "Roda Infernal"
+special_description = "Gira em alta velocidade invulnerável por 5s desferindo golpes."
+special_duration = 5.0
+passive_description = "Dash curto a cada 6s com invulnerabilidade."
