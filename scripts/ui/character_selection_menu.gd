@@ -13,6 +13,7 @@ extends Control
 @onready var start_button: Button = $VBoxContainer/BottomButtons/StartButton
 @onready var candeeiro_button: Button = $VBoxContainer/BottomButtons/CandeeiroButton
 @onready var grimoire_button: Button = $VBoxContainer/BottomButtons/GrimoireButton
+@onready var options_button: Button = $VBoxContainer/BottomButtons/OptionsButton
 
 const CLASS_RESOURCES: Array[String] = [
 	"res://data/classes/benzedeira.tres",
@@ -38,6 +39,10 @@ func _ready() -> void:
 	if grimoire_button:
 		grimoire_button.pressed.connect(func() -> void:
 			get_tree().change_scene_to_file("res://scenes/menu/grimoire_menu.tscn")
+		)
+	if options_button:
+		options_button.pressed.connect(func() -> void:
+			get_tree().change_scene_to_file("res://scenes/menu/options_menu.tscn")
 		)
 
 func _load_class_data() -> void:

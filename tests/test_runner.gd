@@ -168,6 +168,20 @@ func run_all_suites() -> void:
 			failed_tests += 1
 			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
 			
+	log_lines.append("")
+
+	# Suíte 12: Áudio, Marcos de Abate e Noite Infinita (RF-07, RF-18, CA-06)
+	log_lines.append("[b][color=#118ab2]-- Suíte: Áudio, Marcos e Noite Infinita (CA-06) --[/color][/b]")
+	var sprint10_results: Array[Dictionary] = TestSprint10AudioMilestonesEndless.run_all_tests()
+	for res in sprint10_results:
+		total_tests += 1
+		if res["passed"]:
+			passed_tests += 1
+			log_lines.append("[color=#06d6a0]  [PASS][/color] %s" % res["name"])
+		else:
+			failed_tests += 1
+			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
+			
 	log_lines.append("\n------------------------------------------------------------")
 	var summary_text: String = "Testes Executados: %d | Aprovados: %d | Falhas: %d" % [total_tests, passed_tests, failed_tests]
 	

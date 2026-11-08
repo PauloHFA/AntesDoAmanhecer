@@ -1,0 +1,130 @@
+[gd_scene load_steps=2 format=3 uid="uid://o1p2t3i4o5n6s"]
+
+[ext_resource type="Script" path="res://scripts/ui/options_menu.gd" id="1_options"]
+
+[node name="OptionsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_options")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.06, 0.1, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 14
+text = "CONFIGURAÇÕES E ACESSIBILIDADE"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="ShakeRow" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="VBoxContainer/ScrollContainer/VBox/ShakeRow"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Tremor de Tela (Screen Shake):"
+
+[node name="ShakeSlider" type="HSlider" parent="VBoxContainer/ScrollContainer/VBox/ShakeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+value = 100.0
+
+[node name="ShakeValueLabel" type="Label" parent="VBoxContainer/ScrollContainer/VBox/ShakeRow"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "100%"
+
+[node name="HitstopRow" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="HitstopCheck" type="CheckBox" parent="VBoxContainer/ScrollContainer/VBox/HitstopRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+button_pressed = true
+text = "Ativar Hit-stop de Impacto (Micro-congelamento ao bater)"
+
+[node name="NumbersRow" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="NumbersCheck" type="CheckBox" parent="VBoxContainer/ScrollContainer/VBox/NumbersRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+button_pressed = true
+text = "Exibir Números de Dano Flutuantes"
+
+[node name="PhotoRow" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="PhotoCheck" type="CheckBox" parent="VBoxContainer/ScrollContainer/VBox/PhotoRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Modo de Fotossensibilidade (Substitui flashes por brilho suave)"
+
+[node name="MilestoneRow" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="MilestoneCheck" type="CheckBox" parent="VBoxContainer/ScrollContainer/VBox/MilestoneRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+button_pressed = true
+text = "Marcos de Abate com Momento Épico e Escolha de Bênção"
+
+[node name="MasterRow" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="VBoxContainer/ScrollContainer/VBox/MasterRow"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Volume Master Geral:"
+
+[node name="MasterSlider" type="HSlider" parent="VBoxContainer/ScrollContainer/VBox/MasterRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+value = 100.0
+
+[node name="BackButton" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(100, 26)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 10
+text = "VOLTAR"

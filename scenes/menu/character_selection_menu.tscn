@@ -107,3 +107,9 @@ custom_minimum_size = Vector2(130, 30)
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "O GRIMÓRIO (COLEÇÃO)"
+
+[node name="OptionsButton" type="Button" parent="VBoxContainer/BottomButtons"]
+custom_minimum_size = Vector2(110, 30)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "OPÇÕES"
