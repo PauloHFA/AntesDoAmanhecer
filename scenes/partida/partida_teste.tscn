@@ -1,11 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://c3q8f8t6y4n1k"]
+[gd_scene load_steps=10 format=3 uid="uid://c3q8f8t6y4n1k"]
 
 [ext_resource type="Script" path="res://scenes/partida/partida_teste.gd" id="1_arena"]
 [ext_resource type="Script" path="res://scenes/partida/ground_grid.gd" id="2_grid"]
 [ext_resource type="PackedScene" uid="uid://b574jyh4q1n2p" path="res://scenes/player/player.tscn" id="3_player"]
-[ext_resource type="Script" path="res://scripts/enemies/simple_spawner.gd" id="4_spawner"]
-[ext_resource type="Script" path="res://scripts/progression/progression_manager.gd" id="5_progression"]
-[ext_resource type="PackedScene" uid="uid://b7y8u9i0o1p2a" path="res://scenes/ui/level_up_menu.tscn" id="6_levelup"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_swarm_manager.gd" id="4_swarm"]
+[ext_resource type="Script" path="res://scripts/enemies/horde_director.gd" id="5_director"]
+[ext_resource type="Script" path="res://scripts/progression/progression_manager.gd" id="6_progression"]
+[ext_resource type="PackedScene" uid="uid://b7y8u9i0o1p2a" path="res://scenes/ui/level_up_menu.tscn" id="7_levelup"]
+[ext_resource type="Script" path="res://scripts/core/night_cycle_controller.gd" id="8_night"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rock"]
 size = Vector2(32, 32)
@@ -13,8 +15,13 @@ size = Vector2(32, 32)
 [node name="PartidaTeste" type="Node2D"]
 script = ExtResource("1_arena")
 
+[node name="NightCycleController" type="CanvasModulate" parent="."]
+script = ExtResource("8_night")
+
 [node name="GroundGrid" type="Node2D" parent="."]
 script = ExtResource("2_grid")
+grid_width = 80
+grid_height = 80
 
 [node name="Obstacles" type="Node2D" parent="."]
 
@@ -45,11 +52,16 @@ shape = SubResource("RectangleShape2D_rock")
 [node name="Player" parent="." instance=ExtResource("3_player")]
 position = Vector2(0, 0)
 
-[node name="SimpleSpawner" type="Node2D" parent="."]
-script = ExtResource("4_spawner")
+[node name="EnemySwarmManager" type="Node2D" parent="."]
+script = ExtResource("4_swarm")
+max_capacity = 2000
+
+[node name="HordeDirector" type="Node" parent="."]
+script = ExtResource("5_director")
+swarm_manager_path = NodePath("../EnemySwarmManager")
 
 [node name="ProgressionManager" type="Node" parent="."]
-script = ExtResource("5_progression")
+script = ExtResource("6_progression")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -97,7 +109,7 @@ offset_bottom = 80.0
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.85, 0.95, 0.9)
 theme_override_font_sizes/font_size = 11
-text = "Antes do Amanhecer · M0 Protótipo"
+text = "Antes do Amanhecer · Vila de Candeia"
 
 [node name="HealthLabel" type="Label" parent="CanvasLayer/HUD/TopLeft"]
 layout_mode = 2
@@ -110,17 +122,17 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -180.0
+offset_left = -200.0
 offset_top = 32.0
 offset_right = -12.0
-offset_bottom = 80.0
+offset_bottom = 95.0
 grow_horizontal = 0
 
 [node name="TimerLabel" type="Label" parent="CanvasLayer/HUD/TopRight"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.8, 0.5, 1)
 theme_override_font_sizes/font_size = 11
-text = "Noite: 00:00 / 20:00"
+text = "Relógio da Noite: 20:00"
 horizontal_alignment = 2
 
 [node name="KillsLabel" type="Label" parent="CanvasLayer/HUD/TopRight"]
@@ -130,4 +142,53 @@ theme_override_font_sizes/font_size = 11
 text = "Abates: 0"
 horizontal_alignment = 2
 
-[node name="LevelUpMenu" parent="CanvasLayer" instance=ExtResource("6_levelup")]
+[node name="GoldLabel" type="Label" parent="CanvasLayer/HUD/TopRight"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 11
+text = "Ouro: 0"
+horizontal_alignment = 2
+
+[node name="LevelUpMenu" parent="CanvasLayer" instance=ExtResource("7_levelup")]
+
+[node name="VictoryPanel" type="Panel" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -60.0
+offset_right = 200.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/VictoryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="VictoryTitle" type="Label" parent="CanvasLayer/VictoryPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+text = "O SOL NASCEU! VITÓRIA!"
+horizontal_alignment = 1
+
+[node name="VictoryDesc" type="Label" parent="CanvasLayer/VictoryPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
+theme_override_font_sizes/font_size = 10
+text = "A noite foi dissipada pela chama da sua Candeia Viva.
+As criaturas viraram cinzas e confete."
+horizontal_alignment = 1

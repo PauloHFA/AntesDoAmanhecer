@@ -1,19 +1,23 @@
 extends Node2D
 
-## Cena de Partida / Protótipo da Sprint 1 (M0 Protótipo)
-## Integração de Hordas, XP, Arma Orbital (Galho de Arruda) e Escolha de Poderes com Pausa.
+## Cena Principal da Partida (Sprints 1, 2 e 3)
+## Integração de Swarm MultiMesh, Diretor de Hordas, Relógio da Noite, Ouro e Vitória ao Amanhecer.
 
 @onready var player: Player = $Player
 @onready var progression: ProgressionManager = $ProgressionManager
-@onready var spawner: SimpleSpawner = $SimpleSpawner
+@onready var swarm_manager: EnemySwarmManager = $EnemySwarmManager
+@onready var horde_director: HordeDirector = $HordeDirector
+@onready var night_controller: NightCycleController = $NightCycleController
 
 @onready var health_label: Label = $CanvasLayer/HUD/TopLeft/HealthLabel
 @onready var level_label: Label = $CanvasLayer/HUD/TopBar/LevelLabel
 @onready var xp_bar: ProgressBar = $CanvasLayer/HUD/TopBar/XPBar
 @onready var timer_label: Label = $CanvasLayer/HUD/TopRight/TimerLabel
 @onready var kills_label: Label = $CanvasLayer/HUD/TopRight/KillsLabel
+@onready var gold_label: Label = $CanvasLayer/HUD/TopRight/GoldLabel
+@onready var victory_panel: Panel = $CanvasLayer/VictoryPanel
 
-var elapsed_seconds: float = 0.0
+var total_gold_collected: int = 0
 
 func _ready() -> void:
 	if has_node("/root/EventBus"):
@@ -22,18 +26,14 @@ func _ready() -> void:
 		EventBus.player_died.connect(_on_player_died)
 		EventBus.xp_collected.connect(_on_xp_updated)
 		EventBus.enemy_killed.connect(_on_enemy_killed)
+		EventBus.gold_collected.connect(_on_gold_collected)
+		EventBus.night_clock_updated.connect(_on_night_clock_updated)
+		EventBus.match_won.connect(_on_match_won)
+		
+	if victory_panel:
+		victory_panel.visible = false
 		
 	_update_hud_initial()
-
-func _process(delta: float) -> void:
-	elapsed_seconds += delta
-	_update_timer_display()
-
-func _update_timer_display() -> void:
-	if timer_label:
-		var mins: int = int(elapsed_seconds) / 60
-		var secs: int = int(elapsed_seconds) % 60
-		timer_label.text = "Noite: %02d:%02d / 20:00" % [mins, secs]
 
 func _update_hud_initial() -> void:
 	if player and health_label:
@@ -42,6 +42,14 @@ func _update_hud_initial() -> void:
 		level_label.text = "NV. %d" % progression.current_level
 		xp_bar.max_value = progression.target_xp
 		xp_bar.value = progression.current_xp
+	if gold_label:
+		gold_label.text = "Ouro: 0"
+
+func _on_night_clock_updated(time_remaining_seconds: float) -> void:
+	if timer_label:
+		var mins: int = int(time_remaining_seconds) / 60
+		var secs: int = int(time_remaining_seconds) % 60
+		timer_label.text = "Relógio da Noite: %02d:%02d" % [mins, secs]
 
 func _on_player_health_changed(current: int, max_hp: int) -> void:
 	if health_label:
@@ -49,7 +57,7 @@ func _on_player_health_changed(current: int, max_hp: int) -> void:
 
 func _on_player_died() -> void:
 	if health_label:
-		health_label.text = "CANDEIA APAGADA (Fim da Linha)"
+		health_label.text = "CANDEIA APAGADA (A Noite Engoliu a Vila)"
 		health_label.modulate = Color(1.0, 0.2, 0.2)
 
 func _on_xp_updated(_amount: int, current: int, target: int) -> void:
@@ -61,3 +69,12 @@ func _on_xp_updated(_amount: int, current: int, target: int) -> void:
 func _on_enemy_killed(_type: String, _pos: Vector2, _gem: bool) -> void:
 	if kills_label and progression:
 		kills_label.text = "Abates: %d" % progression.total_kills
+
+func _on_gold_collected(amount: int, _total: int) -> void:
+	total_gold_collected += amount
+	if gold_label:
+		gold_label.text = "Ouro: %d" % total_gold_collected
+
+func _on_match_won() -> void:
+	if victory_panel:
+		victory_panel.visible = true
