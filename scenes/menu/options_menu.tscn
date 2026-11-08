@@ -122,9 +122,20 @@ size_flags_horizontal = 3
 size_flags_vertical = 4
 value = 100.0
 
-[node name="BackButton" type="Button" parent="VBoxContainer"]
-custom_minimum_size = Vector2(100, 26)
+[node name="BottomRow" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="SimButton" type="Button" parent="VBoxContainer/BottomRow"]
+custom_minimum_size = Vector2(170, 26)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.6, 1)
+theme_override_font_sizes/font_size = 10
+text = "BOT DE BALANCEAMENTO"
+
+[node name="BackButton" type="Button" parent="VBoxContainer/BottomRow"]
+custom_minimum_size = Vector2(90, 26)
+layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "VOLTAR"

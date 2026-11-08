@@ -12,7 +12,8 @@ extends Control
 @onready var milestone_check: CheckBox = $VBoxContainer/ScrollContainer/VBox/MilestoneRow/MilestoneCheck
 
 @onready var master_slider: HSlider = $VBoxContainer/ScrollContainer/VBox/MasterRow/MasterSlider
-@onready var back_button: Button = $VBoxContainer/BackButton
+@onready var sim_button: Button = $VBoxContainer/BottomRow/SimButton
+@onready var back_button: Button = $VBoxContainer/BottomRow/BackButton
 
 var settings: SettingsManager = null
 
@@ -31,6 +32,10 @@ func _ready() -> void:
 		numbers_check.toggled.connect(_on_numbers_toggled)
 	if photo_check:
 		photo_check.toggled.connect(_on_photo_toggled)
+	if sim_button:
+		sim_button.pressed.connect(func() -> void:
+			get_tree().change_scene_to_file("res://scenes/tools/bot_simulation_runner.tscn")
+		)
 	if back_button:
 		back_button.pressed.connect(_on_back_pressed)
 
