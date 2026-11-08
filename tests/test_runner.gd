@@ -112,6 +112,20 @@ func run_all_suites() -> void:
 			failed_tests += 1
 			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
 			
+	log_lines.append("")
+
+	# Suíte 8: Vertical Slice - Benzedeira e Chefe Mapinguari (RF-11, RF-12, RF-13, CA-10)
+	log_lines.append("[b][color=#118ab2]-- Suíte: Vertical Slice (Benzedeira & Mapinguari) --[/color][/b]")
+	var sprint6_results: Array[Dictionary] = TestSprint6VerticalSlice.run_all_tests()
+	for res in sprint6_results:
+		total_tests += 1
+		if res["passed"]:
+			passed_tests += 1
+			log_lines.append("[color=#06d6a0]  [PASS][/color] %s" % res["name"])
+		else:
+			failed_tests += 1
+			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
+			
 	log_lines.append("\n------------------------------------------------------------")
 	var summary_text: String = "Testes Executados: %d | Aprovados: %d | Falhas: %d" % [total_tests, passed_tests, failed_tests]
 	
