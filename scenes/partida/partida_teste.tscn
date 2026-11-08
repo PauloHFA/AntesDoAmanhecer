@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c3q8f8t6y4n1k"]
+[gd_scene load_steps=17 format=3 uid="uid://c3q8f8t6y4n1k"]
 
 [ext_resource type="Script" path="res://scenes/partida/partida_teste.gd" id="1_arena"]
 [ext_resource type="Script" path="res://scenes/partida/ground_grid.gd" id="2_grid"]
@@ -11,12 +11,28 @@
 [ext_resource type="Script" path="res://scripts/progression/passive_manager.gd" id="9_passives"]
 [ext_resource type="PackedScene" uid="uid://d1c2h3e4s5t6p" path="res://scenes/pickups/treasure_chest.tscn" id="10_chest"]
 [ext_resource type="PackedScene" uid="uid://c1r2m3u4n5u6t" path="res://scenes/ui/chest_roulette_menu.tscn" id="11_chest_ui"]
+[ext_resource type="Script" path="res://scripts/core/settings_manager.gd" id="12_settings"]
+[ext_resource type="Script" path="res://scripts/fx/juice_controller.gd" id="13_juice"]
+[ext_resource type="Script" path="res://scripts/fx/damage_number_pool.gd" id="14_dmgpool"]
+[ext_resource type="Script" path="res://scripts/fx/death_particles_pool.gd" id="15_deathfx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rock"]
 size = Vector2(32, 32)
 
 [node name="PartidaTeste" type="Node2D"]
 script = ExtResource("1_arena")
+
+[node name="SettingsManager" type="Node" parent="." groups=["settings"]]
+script = ExtResource("12_settings")
+
+[node name="JuiceController" type="Node2D" parent="." groups=["juice"]]
+script = ExtResource("13_juice")
+
+[node name="DamageNumberPool" type="Node2D" parent="." groups=["damage_pool"]]
+script = ExtResource("14_dmgpool")
+
+[node name="DeathParticlesPool" type="Node2D" parent="." groups=["death_fx_pool"]]
+script = ExtResource("15_deathfx")
 
 [node name="NightCycleController" type="CanvasModulate" parent="."]
 script = ExtResource("8_night")

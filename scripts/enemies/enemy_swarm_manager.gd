@@ -212,6 +212,12 @@ func damage_in_radius(center: Vector2, radius: float, damage: float, knockback: 
 		if healths[idx] <= 0.0:
 			kill_enemy(idx, true)
 			
+	if hits > 0:
+		var d_pools: Array[Node] = get_tree().get_nodes_in_group("damage_pool")
+		if d_pools.size() > 0:
+			var dmg_pool: DamageNumberPool = d_pools[0] as DamageNumberPool
+			dmg_pool.spawn_number(center, damage)
+
 	return hits
 
 ## Elimina um inimigo do lote e recicla seu slot
@@ -231,6 +237,11 @@ func kill_enemy(index: int, drop_gem: bool = true) -> void:
 	if has_node("/root/EventBus"):
 		EventBus.enemy_killed.emit("Alma Penada (Lote)", death_pos, drop_gem)
 		
+	var fx_pools: Array[Node] = get_tree().get_nodes_in_group("death_fx_pool")
+	if fx_pools.size() > 0:
+		var death_fx: DeathParticlesPool = fx_pools[0] as DeathParticlesPool
+		death_fx.spawn_death_burst(death_pos)
+
 	if drop_gem and XP_GEM_SCENE:
 		var gem: Node2D = XP_GEM_SCENE.instantiate() as Node2D
 		gem.global_position = death_pos
