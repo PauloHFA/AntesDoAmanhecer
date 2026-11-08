@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="StageData" load_steps=2 format=3 uid="uid://s_canavial_02"]
+
+[ext_resource type="Script" path="res://scripts/core/stage_data.gd" id="1_stage"]
+
+[resource]
+script = ExtResource("1_stage")
+stage_id = "canavial_amaldicoado"
+display_name = "Canavial Amaldiçoado"
+act_number = 2
+description = "Plantações densas de cana, trilhos enferrujados e a velha moenda."
+scene_path = "res://scenes/estagios/canavial_amaldicoado.tscn"
+ground_color = Color(0.05, 0.09, 0.06, 1)
+grid_line_color = Color(0.12, 0.22, 0.14, 1)
+night_tint_color = Color(0.35, 0.55, 0.45, 1)
+first_boss_name = "Boitatá Colossal"
+first_boss_minute = 12
+second_boss_name = "Mula Gigante"
+second_boss_minute = 19

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="StageData" load_steps=2 format=3 uid="uid://s_capela_03"]
+
+[ext_resource type="Script" path="res://scripts/core/stage_data.gd" id="1_stage"]
+
+[resource]
+script = ExtResource("1_stage")
+stage_id = "capela_pacto"
+display_name = "Capela do Pacto"
+act_number = 3
+description = "Capela de pedra ardósia, cripta profunda e o engenho em chamas eternas."
+scene_path = "res://scenes/estagios/capela_pacto.tscn"
+ground_color = Color(0.09, 0.06, 0.08, 1)
+grid_line_color = Color(0.25, 0.12, 0.15, 1)
+night_tint_color = Color(0.65, 0.35, 0.45, 1)
+first_boss_name = "Coronel Aurélio"
+first_boss_minute = 15
+second_boss_name = "Lua Negra"
+second_boss_minute = 20

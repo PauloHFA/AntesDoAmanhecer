@@ -1,0 +1,256 @@
+[gd_scene load_steps=18 format=3 uid="uid://s3c4a5p6e7l8a"]
+
+[ext_resource type="Script" path="res://scenes/partida/partida_teste.gd" id="1_arena"]
+[ext_resource type="Script" path="res://scenes/partida/ground_grid.gd" id="2_grid"]
+[ext_resource type="PackedScene" uid="uid://b574jyh4q1n2p" path="res://scenes/player/player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_swarm_manager.gd" id="4_swarm"]
+[ext_resource type="Script" path="res://scripts/enemies/horde_director.gd" id="5_director"]
+[ext_resource type="Script" path="res://scripts/progression/progression_manager.gd" id="6_progression"]
+[ext_resource type="PackedScene" uid="uid://b7y8u9i0o1p2a" path="res://scenes/ui/level_up_menu.tscn" id="7_levelup"]
+[ext_resource type="Script" path="res://scripts/core/night_cycle_controller.gd" id="8_night"]
+[ext_resource type="Script" path="res://scripts/progression/passive_manager.gd" id="9_passives"]
+[ext_resource type="PackedScene" uid="uid://d1c2h3e4s5t6p" path="res://scenes/pickups/treasure_chest.tscn" id="10_chest"]
+[ext_resource type="PackedScene" uid="uid://c1r2m3u4n5u6t" path="res://scenes/ui/chest_roulette_menu.tscn" id="11_chest_ui"]
+[ext_resource type="Script" path="res://scripts/core/settings_manager.gd" id="12_settings"]
+[ext_resource type="Script" path="res://scripts/fx/juice_controller.gd" id="13_juice"]
+[ext_resource type="Script" path="res://scripts/fx/damage_number_pool.gd" id="14_dmgpool"]
+[ext_resource type="Script" path="res://scripts/fx/death_particles_pool.gd" id="15_deathfx"]
+[ext_resource type="Resource" uid="uid://s_capela_03" path="res://data/stages/capela_pacto.tres" id="16_stagedata"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_altar"]
+size = Vector2(44, 44)
+
+[node name="CapelaDoPacto" type="Node2D"]
+script = ExtResource("1_arena")
+
+[node name="SettingsManager" type="Node" parent="." groups=["settings"]]
+script = ExtResource("12_settings")
+
+[node name="JuiceController" type="Node2D" parent="." groups=["juice"]]
+script = ExtResource("13_juice")
+
+[node name="DamageNumberPool" type="Node2D" parent="." groups=["damage_pool"]]
+script = ExtResource("14_dmgpool")
+
+[node name="DeathParticlesPool" type="Node2D" parent="." groups=["death_fx_pool"]]
+script = ExtResource("15_deathfx")
+
+[node name="NightCycleController" type="CanvasModulate" parent="."]
+color = Color(0.65, 0.35, 0.45, 1)
+script = ExtResource("8_night")
+
+[node name="GroundGrid" type="Node2D" parent="."]
+script = ExtResource("2_grid")
+cell_size = 32
+grid_width = 80
+grid_height = 80
+bg_color = Color(0.09, 0.06, 0.08, 1)
+line_color = Color(0.25, 0.12, 0.15, 1)
+border_color = Color(0.6, 0.2, 0.2, 1)
+
+[node name="Obstacles" type="Node2D" parent="."]
+
+[node name="StoneAltar" type="StaticBody2D" parent="Obstacles"]
+position = Vector2(160, -80)
+collision_layer = 1
+collision_mask = 1
+
+[node name="Visual" type="Polygon2D" parent="Obstacles/StoneAltar"]
+color = Color(0.3, 0.18, 0.2, 1)
+polygon = PackedVector2Array(-22, -22, 22, -22, 22, 22, -22, 22)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/StoneAltar"]
+shape = SubResource("RectangleShape2D_altar")
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+position = Vector2(0, 0)
+
+[node name="PassiveManager" type="Node" parent="." groups=["passive_manager"]]
+script = ExtResource("9_passives")
+player_path = NodePath("../Player")
+
+[node name="EnemySwarmManager" type="Node2D" parent="."]
+script = ExtResource("4_swarm")
+max_capacity = 3000
+
+[node name="HordeDirector" type="Node" parent="."]
+script = ExtResource("5_director")
+swarm_manager_path = NodePath("../EnemySwarmManager")
+
+[node name="ProgressionManager" type="Node" parent="."]
+script = ExtResource("6_progression")
+
+[node name="TreasureChest" parent="." instance=ExtResource("10_chest")]
+position = Vector2(90, 0)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopBar" type="HBoxContainer" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = 24.0
+grow_horizontal = 2
+theme_override_constants/separation = 8
+
+[node name="LevelLabel" type="Label" parent="CanvasLayer/HUD/TopBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 11
+text = "NV. 1"
+
+[node name="XPBar" type="ProgressBar" parent="CanvasLayer/HUD/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 9
+show_percentage = false
+
+[node name="FuryLabel" type="Label" parent="CanvasLayer/HUD/TopBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.7, 0.2, 1)
+theme_override_font_sizes/font_size = 10
+text = "FÚRIA:"
+
+[node name="FuryBar" type="ProgressBar" parent="CanvasLayer/HUD/TopBar"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 9
+value = 0.0
+show_percentage = false
+
+[node name="TopLeft" type="VBoxContainer" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 32.0
+offset_right = 260.0
+offset_bottom = 80.0
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/HUD/TopLeft"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.6, 0.9)
+theme_override_font_sizes/font_size = 11
+text = "Ato 3 · Capela do Pacto"
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer/HUD/TopLeft"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 11
+text = "Vida: 100 / 100"
+
+[node name="TopRight" type="VBoxContainer" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 32.0
+offset_right = -12.0
+offset_bottom = 95.0
+grow_horizontal = 0
+
+[node name="TimerLabel" type="Label" parent="CanvasLayer/HUD/TopRight"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 0.5, 1)
+theme_override_font_sizes/font_size = 11
+text = "Relógio da Noite: 20:00"
+horizontal_alignment = 2
+
+[node name="KillsLabel" type="Label" parent="CanvasLayer/HUD/TopRight"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+text = "Abates: 0"
+horizontal_alignment = 2
+
+[node name="GoldLabel" type="Label" parent="CanvasLayer/HUD/TopRight"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_font_sizes/font_size = 11
+text = "Ouro: 0"
+horizontal_alignment = 2
+
+[node name="BossHUD" type="VBoxContainer" parent="CanvasLayer"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -48.0
+offset_right = 180.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BossNameLabel" type="Label" parent="CanvasLayer/BossHUD"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.2, 0.3, 1)
+theme_override_font_sizes/font_size = 11
+text = "★ CHEFE FINAL: LUA NEGRA ★"
+horizontal_alignment = 1
+
+[node name="BossHPBar" type="ProgressBar" parent="CanvasLayer/BossHUD"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+value = 100.0
+
+[node name="LevelUpMenu" parent="CanvasLayer" instance=ExtResource("7_levelup")]
+
+[node name="ChestRouletteMenu" parent="CanvasLayer" instance=ExtResource("11_chest_ui")]
+
+[node name="VictoryPanel" type="Panel" parent="CanvasLayer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -60.0
+offset_right = 200.0
+offset_bottom = 60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/VictoryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="VictoryTitle" type="Label" parent="CanvasLayer/VictoryPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+text = "O PACTO FOI QUEBRADO! AURORA ESTÁ LIVRE!"
+horizontal_alignment = 1
+
+[node name="VictoryDesc" type="Label" parent="CanvasLayer/VictoryPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
+theme_override_font_sizes/font_size = 10
+text = "O sol finalmente voltou a nascer no sertão. Parabéns, Vigilante!"
+horizontal_alignment = 1

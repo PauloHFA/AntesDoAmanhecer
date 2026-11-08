@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="StageData" load_steps=2 format=3 uid="uid://s_vila_01"]
+
+[ext_resource type="Script" path="res://scripts/core/stage_data.gd" id="1_stage"]
+
+[resource]
+script = ExtResource("1_stage")
+stage_id = "vila_candeia"
+display_name = "Vila de Candeia"
+act_number = 1
+description = "Ruas de terra, casario, praça e igreja da vila esquecida pelo sol."
+scene_path = "res://scenes/partida/partida_teste.tscn"
+ground_color = Color(0.06, 0.08, 0.12, 1)
+grid_line_color = Color(0.12, 0.15, 0.22, 1)
+night_tint_color = Color(0.45, 0.45, 0.65, 1)
+first_boss_name = "Mapinguari"
+first_boss_minute = 10
+second_boss_name = "Cuca"
+second_boss_minute = 18
