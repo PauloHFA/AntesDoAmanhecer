@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="24" fill="#0d1117"/>
+  <!-- Candle / Lantern base -->
+  <path d="M48 96 L80 96 L76 72 L52 72 Z" fill="#8d5b2d"/>
+  <ellipse cx="64" cy="96" rx="20" ry="6" fill="#5c3818"/>
+  <!-- Flame -->
+  <path d="M64 32 C52 50 48 64 64 74 C80 64 76 50 64 32 Z" fill="#ffb703"/>
+  <path d="M64 42 C58 54 56 62 64 68 C72 62 70 54 64 42 Z" fill="#fb8500"/>
+  <ellipse cx="64" cy="62" rx="4" ry="7" fill="#fff3b0"/>
+</svg>

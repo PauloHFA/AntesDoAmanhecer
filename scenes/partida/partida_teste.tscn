@@ -1,0 +1,88 @@
+[gd_scene load_steps=6 format=3 uid="uid://c3q8f8t6y4n1k"]
+
+[ext_resource type="Script" path="res://scenes/partida/partida_teste.gd" id="1_arena"]
+[ext_resource type="Script" path="res://scenes/partida/ground_grid.gd" id="2_grid"]
+[ext_resource type="PackedScene" uid="uid://b574jyh4q1n2p" path="res://scenes/player/player.tscn" id="3_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rock"]
+size = Vector2(32, 32)
+
+[node name="PartidaTeste" type="Node2D"]
+script = ExtResource("1_arena")
+
+[node name="GroundGrid" type="Node2D" parent="."]
+script = ExtResource("2_grid")
+
+[node name="Obstacles" type="Node2D" parent="."]
+
+[node name="Obstacle1" type="StaticBody2D" parent="Obstacles"]
+position = Vector2(-120, -80)
+collision_layer = 1
+collision_mask = 1
+
+[node name="Visual" type="Polygon2D" parent="Obstacles/Obstacle1"]
+color = Color(0.2, 0.22, 0.3, 1)
+polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Obstacle1"]
+shape = SubResource("RectangleShape2D_rock")
+
+[node name="Obstacle2" type="StaticBody2D" parent="Obstacles"]
+position = Vector2(140, 70)
+collision_layer = 1
+collision_mask = 1
+
+[node name="Visual" type="Polygon2D" parent="Obstacles/Obstacle2"]
+color = Color(0.2, 0.22, 0.3, 1)
+polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Obstacles/Obstacle2"]
+shape = SubResource("RectangleShape2D_rock")
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+position = Vector2(0, 0)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 350.0
+offset_bottom = 120.0
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+text = "Antes do Amanhecer · Protótipo Sprint 0"
+
+[node name="HealthLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Vida: 100 / 100"
+
+[node name="SpeedLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Velocidade Base: 120 px/s"
+
+[node name="PosLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Posição: (0, 0)"
+
+[node name="HelpLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+text = "Controles: WASD ou Setas | Espaço: Especial"
