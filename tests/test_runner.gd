@@ -42,6 +42,20 @@ func run_all_suites() -> void:
 			failed_tests += 1
 			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
 			
+	log_lines.append("")
+
+	# Suíte 3: Mecânicas da Sprint 1 (Galho de Arruda e Progressão)
+	log_lines.append("[b][color=#118ab2]-- Suíte: Mecânicas da Sprint 1 (CA-02, CA-03) --[/color][/b]")
+	var sprint1_results: Array[Dictionary] = TestSprint1Mechanics.run_all_tests()
+	for res in sprint1_results:
+		total_tests += 1
+		if res["passed"]:
+			passed_tests += 1
+			log_lines.append("[color=#06d6a0]  [PASS][/color] %s" % res["name"])
+		else:
+			failed_tests += 1
+			log_lines.append("[color=#ef476f]  [FAIL][/color] %s (%s)" % [res["name"], res["details"]])
+			
 	log_lines.append("\n------------------------------------------------------------")
 	var summary_text: String = "Testes Executados: %d | Aprovados: %d | Falhas: %d" % [total_tests, passed_tests, failed_tests]
 	

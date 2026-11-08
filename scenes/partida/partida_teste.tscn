@@ -1,8 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://c3q8f8t6y4n1k"]
+[gd_scene load_steps=8 format=3 uid="uid://c3q8f8t6y4n1k"]
 
 [ext_resource type="Script" path="res://scenes/partida/partida_teste.gd" id="1_arena"]
 [ext_resource type="Script" path="res://scenes/partida/ground_grid.gd" id="2_grid"]
 [ext_resource type="PackedScene" uid="uid://b574jyh4q1n2p" path="res://scenes/player/player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://scripts/enemies/simple_spawner.gd" id="4_spawner"]
+[ext_resource type="Script" path="res://scripts/progression/progression_manager.gd" id="5_progression"]
+[ext_resource type="PackedScene" uid="uid://b7y8u9i0o1p2a" path="res://scenes/ui/level_up_menu.tscn" id="6_levelup"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rock"]
 size = Vector2(32, 32)
@@ -16,7 +19,7 @@ script = ExtResource("2_grid")
 [node name="Obstacles" type="Node2D" parent="."]
 
 [node name="Obstacle1" type="StaticBody2D" parent="Obstacles"]
-position = Vector2(-120, -80)
+position = Vector2(-160, -100)
 collision_layer = 1
 collision_mask = 1
 
@@ -28,7 +31,7 @@ polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
 shape = SubResource("RectangleShape2D_rock")
 
 [node name="Obstacle2" type="StaticBody2D" parent="Obstacles"]
-position = Vector2(140, 70)
+position = Vector2(180, 110)
 collision_layer = 1
 collision_mask = 1
 
@@ -42,6 +45,12 @@ shape = SubResource("RectangleShape2D_rock")
 [node name="Player" parent="." instance=ExtResource("3_player")]
 position = Vector2(0, 0)
 
+[node name="SimpleSpawner" type="Node2D" parent="."]
+script = ExtResource("4_spawner")
+
+[node name="ProgressionManager" type="Node" parent="."]
+script = ExtResource("5_progression")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="HUD" type="Control" parent="CanvasLayer"]
@@ -53,36 +62,72 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/HUD"]
+[node name="TopBar" type="HBoxContainer" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = 24.0
+grow_horizontal = 2
+theme_override_constants/separation = 8
+
+[node name="LevelLabel" type="Label" parent="CanvasLayer/HUD/TopBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_font_sizes/font_size = 11
+text = "NV. 1"
+
+[node name="XPBar" type="ProgressBar" parent="CanvasLayer/HUD/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 9
+show_percentage = false
+
+[node name="TopLeft" type="VBoxContainer" parent="CanvasLayer/HUD"]
 layout_mode = 0
 offset_left = 12.0
-offset_top = 10.0
-offset_right = 350.0
-offset_bottom = 120.0
+offset_top = 32.0
+offset_right = 260.0
+offset_bottom = 80.0
 
-[node name="TitleLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CanvasLayer/HUD/TopLeft"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
-theme_override_font_sizes/font_size = 14
-text = "Antes do Amanhecer · Protótipo Sprint 0"
+theme_override_colors/font_color = Color(0.8, 0.85, 0.95, 0.9)
+theme_override_font_sizes/font_size = 11
+text = "Antes do Amanhecer · M0 Protótipo"
 
-[node name="HealthLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+[node name="HealthLabel" type="Label" parent="CanvasLayer/HUD/TopLeft"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
 theme_override_font_sizes/font_size = 11
 text = "Vida: 100 / 100"
 
-[node name="SpeedLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 11
-text = "Velocidade Base: 120 px/s"
+[node name="TopRight" type="VBoxContainer" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -180.0
+offset_top = 32.0
+offset_right = -12.0
+offset_bottom = 80.0
+grow_horizontal = 0
 
-[node name="PosLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+[node name="TimerLabel" type="Label" parent="CanvasLayer/HUD/TopRight"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 0.5, 1)
 theme_override_font_sizes/font_size = 11
-text = "Posição: (0, 0)"
+text = "Noite: 00:00 / 20:00"
+horizontal_alignment = 2
 
-[node name="HelpLabel" type="Label" parent="CanvasLayer/HUD/VBoxContainer"]
+[node name="KillsLabel" type="Label" parent="CanvasLayer/HUD/TopRight"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
-theme_override_font_sizes/font_size = 10
-text = "Controles: WASD ou Setas | Espaço: Especial"
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+text = "Abates: 0"
+horizontal_alignment = 2
+
+[node name="LevelUpMenu" parent="CanvasLayer" instance=ExtResource("6_levelup")]
